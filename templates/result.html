@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Results — FoodLane</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --brand: #fc5c04;
+        --brand-dark: #e04900;
+        --brand-lt: #fff3ee;
+        --green: #1ba672;
+        --green-lt: #e6f7f1;
+        --yellow: #f5a623;
+        --yellow-lt: #fff8e7;
+        --red: #e23744;
+        --bg: #f8f8f8;
+        --white: #ffffff;
+        --text: #1c1c1c;
+        --text-2: #3d3d3d;
+        --muted: #8b8b8b;
+        --border: #e8e8e8;
+        --shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+        --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.11);
+        --radius: 16px;
+      }
+
+      body {
+        font-family: "Nunito", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── TOPBAR ── */
+      .topbar {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+      }
+      .topbar-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+      .logo-icon {
+        width: 38px;
+        height: 38px;
+        background: var(--brand);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+      }
+      .logo-text {
+        font-size: 22px;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -0.5px;
+      }
+      .logo-text span {
+        color: var(--brand);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-2);
+        font-size: 14px;
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+      .nav-links a:hover {
+        background: var(--bg);
+        color: var(--brand);
+      }
+      .nav-btn {
+        background: var(--brand) !important;
+        color: white !important;
+        border-radius: 10px !important;
+      }
+      .nav-btn:hover {
+        background: var(--brand-dark) !important;
+      }
+
+      /* ── RESULTS HEADER ── */
+      .results-header {
+        background: white;
+        border-bottom: 1px solid var(--border);
+        padding: 20px 0;
+      }
+      .results-header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .breadcrumb a {
+        text-decoration: none;
+        color: var(--muted);
+        transition: color 0.2s;
+      }
+      .breadcrumb a:hover {
+        color: var(--brand);
+      }
+      .breadcrumb i {
+        font-size: 10px;
+      }
+
+      .results-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .results-title {
+        font-size: 22px;
+        font-weight: 900;
+      }
+      .results-title span {
+        color: var(--brand);
+      }
+      .results-count-badge {
+        background: var(--green-lt);
+        color: var(--green);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* ── FILTER STRIP ── */
+      .filter-strip {
+        background: white;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 0;
+      }
+      .filter-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .filter-inner::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-label {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--text-2);
+        white-space: nowrap;
+        margin-right: 4px;
+        flex-shrink: 0;
+      }
+      .filter-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-2);
+        background: white;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .filter-chip:hover,
+      .filter-chip.on {
+        background: var(--brand-lt);
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+      .filter-chip i {
+        font-size: 11px;
+      }
+
+      /* ── MAIN GRID ── */
+      .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 24px 60px;
+        flex: 1;
+      }
+
+      /* Sorting bar */
+      .sort-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .sort-label {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-2);
+      }
+      .sort-label span {
+        color: var(--brand);
+      }
+      .sort-btn {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-2);
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .sort-btn:hover {
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+
+      /* Restaurant Cards Grid */
+
+      .cards-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      .restaurant-card {
+        flex: 0 0 300px; /* fixed width */
+        max-width: 300px;
+      }
+      .cards-grid:has(.restaurant-card:only-child) {
+        justify-content: center;
+      }
+      .cards-grid:has(.restaurant-card:nth-child(2):last-child) {
+        justify-content: center;
+      }
+      .main-content {
+        max-width: 1000px; /* tighter layout */
+      }
+
+      .restaurant-card {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: all 0.25s;
+        cursor: pointer;
+        border: 1.5px solid transparent;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+      .restaurant-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-3px);
+        border-color: var(--border);
+      }
+
+      /* Card image / cover */
+      .card-cover {
+        height: 160px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f0e6d3 0%, #e8d5b5 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cover-emoji {
+        font-size: 72px;
+        opacity: 0.6;
+        filter: grayscale(20%);
+      }
+      .card-cover-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.45) 0%,
+          transparent 60%
+        );
+      }
+
+      /* Top pick ribbon */
+      .top-ribbon {
+        position: absolute;
+        top: 12px;
+        left: 0;
+        background: var(--brand);
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 4px 12px 4px 10px;
+        clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .promoted-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.55);
+        color: white;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+      }
+
+      /* Time & delivery info */
+      .card-meta-strip {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .meta-time {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 700;
+        color: white;
+      }
+      .meta-time i {
+        font-size: 11px;
+      }
+
+      /* Card body */
+      .card-body {
+        padding: 16px;
+      }
+      .card-name {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card-cuisine {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: capitalize;
+      }
+
+      .card-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 12px 0;
+      }
+
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .rating-chip {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .rating-chip.high {
+        background: var(--green-lt);
+        color: var(--green);
+      }
+      .rating-chip.mid {
+        background: var(--yellow-lt);
+        color: #c47e00;
+      }
+      .rating-chip.low {
+        background: #fff0f0;
+        color: var(--red);
+      }
+      .rating-chip i {
+        font-size: 11px;
+      }
+
+      .cost-wrap {
+        text-align: right;
+      }
+      .cost-val {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .cost-label {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      /* Card rank badge */
+      .rank-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 900;
+        color: var(--muted);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Cuisine emoji mapping for cover */
+      .cover-north-indian {
+        background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+      }
+      .cover-south-indian {
+        background: linear-gradient(135deg, #f1f8e9, #dcedc8);
+      }
+      .cover-chinese {
+        background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+      }
+      .cover-mughlai {
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+      }
+      .cover-italian {
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      }
+      .cover-seafood {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      }
+      .cover-fast-food {
+        background: linear-gradient(135deg, #fff9c4, #fff176);
+      }
+      .cover-biryani {
+        background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+      }
+      .cover-thai {
+        background: linear-gradient(135deg, #e0f2f1, #b2dfdb);
+      }
+      .cover-continental {
+        background: linear-gradient(135deg, #fbe9e7, #ffccbc);
+      }
+
+      /* ── EMPTY STATE ── */
+      .empty-state {
+        text-align: center;
+        padding: 80px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .empty-illustration {
+        font-size: 80px;
+        margin-bottom: 24px;
+      }
+      .empty-state h2 {
+        font-size: 24px;
+        font-weight: 900;
+        margin-bottom: 10px;
+      }
+      .empty-state p {
+        font-size: 15px;
+        color: var(--muted);
+        font-weight: 600;
+        max-width: 400px;
+        margin: 0 auto 32px;
+        line-height: 1.6;
+      }
+      .try-again-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--brand);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 900;
+        font-size: 15px;
+        text-decoration: none;
+        box-shadow: 0 4px 16px rgba(252, 92, 4, 0.3);
+        transition: all 0.2s;
+      }
+      .try-again-btn:hover {
+        background: var(--brand-dark);
+        transform: translateY(-1px);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: white;
+        border-top: 1px solid var(--border);
+        padding: 24px;
+        margin-top: auto;
+      }
+      .footer-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-logo {
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .footer-logo span {
+        color: var(--brand);
+      }
+      .footer-copy {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      @media (max-width: 640px) {
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+        .filter-inner {
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="logo" href="/">
+          <div class="logo-icon"><i class="fa-solid fa-utensils"></i></div>
+          <span class="logo-text">Food<span>Lane</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/recommend" class="nav-btn"
+            ><i class="fa-solid fa-search"></i> New Search</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    {% if recommended_restaurants %}
+
+    <!-- RESULTS HEADER -->
+    <div class="results-header">
+      <div class="results-header-inner">
+        <div class="breadcrumb">
+          <a href="/">Home</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="/recommend">Search</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Results</span>
+        </div>
+        <div class="results-title-row">
+          {% if search_name %}
+          <div class="results-title">
+            Similar to <span>{{ search_name }}</span> 🍽️
+          </div>
+          {% else %}
+          <div class="results-title">Your <span>Recommendations</span> 🍽️</div>
+          {% endif %}
+          <div class="results-count-badge">
+            <i class="fa-solid fa-check-circle"></i>
+            {{ recommended_restaurants|length }} restaurant{{ 's' if
+            recommended_restaurants|length != 1 }} found
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER STRIP -->
+    <div class="filter-strip">
+      <div class="filter-inner">
+        <span class="filter-label">Sort & Filter:</span>
+        <a href="/recommend" class="filter-chip"
+          ><i class="fa-solid fa-sliders"></i> Edit Filters</a
+        >
+        <div class="filter-chip on">
+          <i class="fa-solid fa-star"></i> Top Rated First
+        </div>
+        <div class="filter-chip">
+          <i class="fa-solid fa-indian-rupee-sign"></i> Budget Friendly
+        </div>
+        <div class="filter-chip">
+          <i class="fa-solid fa-fire"></i> Most Popular
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS GRID -->
+    <div class="main-content">
+      <div class="sort-bar">
+        <div class="sort-label">
+          Showing <span>{{ recommended_restaurants|length }}</span> restaurants
+          — sorted by rating
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        {% for r in recommended_restaurants %} {% set cuisine_lower = r.cuisines
+        | lower %} {% set emoji = '🍽️' %} {% if 'north indian' in cuisine_lower
+        %}{% set emoji = '🍛' %} {% elif 'south indian' in cuisine_lower %}{%
+        set emoji = '🥘' %} {% elif 'chinese' in cuisine_lower %}{% set emoji =
+        '🍜' %} {% elif 'mughlai' in cuisine_lower %}{% set emoji = '🍖' %} {%
+        elif 'italian' in cuisine_lower %}{% set emoji = '🍕' %} {% elif
+        'seafood' in cuisine_lower or 'fish' in cuisine_lower %}{% set emoji =
+        '🐟' %} {% elif 'fast food' in cuisine_lower or 'burger' in
+        cuisine_lower %}{% set emoji = '🍔' %} {% elif 'biryani' in
+        cuisine_lower %}{% set emoji = '🍱' %} {% elif 'thai' in cuisine_lower
+        %}{% set emoji = '🍣' %} {% elif 'continental' in cuisine_lower %}{% set
+        emoji = '🍝' %} {% elif 'pizza' in cuisine_lower %}{% set emoji = '🍕'
+        %} {% elif 'dessert' in cuisine_lower or 'ice cream' in cuisine_lower
+        %}{% set emoji = '🍦' %} {% endif %} {% set rating = r['Mean Rating'] |
+        float %} {% set rating_class = 'high' if rating >= 4.0 else ('mid' if
+        rating >= 3.0 else 'low') %}
+
+        <div class="restaurant-card">
+          <div class="card-cover">
+            <div class="cover-emoji">{{ emoji }}</div>
+            <div class="card-cover-overlay"></div>
+
+            {% if loop.first %}
+            <div class="top-ribbon">
+              <i class="fa-solid fa-crown"></i> Top Pick
+            </div>
+            {% endif %} {% if loop.index <= 3 %}
+            <div class="promoted-badge">FEATURED</div>
+            {% endif %}
+
+            <div class="card-meta-strip">
+              <div class="meta-time">
+                <i class="fa-regular fa-clock"></i> 25–35 mins
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="card-name">{{ r.name }}</div>
+            <div class="card-cuisine">{{ r.cuisines | title }}</div>
+
+            <div class="card-divider"></div>
+
+            <div class="card-footer">
+              <div class="rating-chip {{ rating_class }}">
+                <i class="fa-solid fa-star"></i>
+                {{ "%.1f" | format(r['Mean Rating']) }}
+              </div>
+              <div class="cost-wrap">
+                <div class="cost-val">₹{{ "%.0f" | format(r.cost) }}</div>
+                <div class="cost-label">for one</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% else %}
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state">
+      <div class="empty-illustration">🍽️</div>
+      <h2>No Restaurants Found</h2>
+      <p>
+        We couldn't find any restaurants matching your preferences. Try
+        broadening your filters or searching with a different name.
+      </p>
+      <a href="/recommend" class="try-again-btn">
+        <i class="fa-solid fa-rotate-left"></i> Try Again
+      </a>
+    </div>
+
+    {% endif %}
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-logo">Food<span>Lane</span></div>
+        <div class="footer-copy">
+          © 2026 FoodLane · Developed by Bilal Mirje.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

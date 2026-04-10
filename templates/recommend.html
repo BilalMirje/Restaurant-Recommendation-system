@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Restaurants — FoodLane</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --brand: #fc5c04;
+        --brand-dark: #e04900;
+        --brand-lt: #fff3ee;
+        --green: #1ba672;
+        --bg: #f8f8f8;
+        --white: #ffffff;
+        --text: #1c1c1c;
+        --text-2: #3d3d3d;
+        --muted: #8b8b8b;
+        --border: #e8e8e8;
+        --shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+        --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.11);
+        --radius: 16px;
+      }
+
+      body {
+        font-family: "Nunito", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── TOPBAR ── */
+      .topbar {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+      }
+      .topbar-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+      .logo-icon {
+        width: 38px;
+        height: 38px;
+        background: var(--brand);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+      }
+      .logo-text {
+        font-size: 22px;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -0.5px;
+      }
+      .logo-text span {
+        color: var(--brand);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-2);
+        font-size: 14px;
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+      .nav-links a:hover {
+        background: var(--bg);
+        color: var(--brand);
+      }
+      .nav-active {
+        color: var(--brand) !important;
+        background: var(--brand-lt) !important;
+      }
+
+      /* ── PROGRESS STEPS ── */
+      .progress-wrap {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 24px;
+      }
+      .progress-inner {
+        max-width: 680px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+      .prog-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+      }
+      .prog-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+      .prog-circle.active {
+        background: var(--brand);
+        color: white;
+      }
+      .prog-circle.done {
+        background: var(--green);
+        color: white;
+      }
+      .prog-circle.inactive {
+        background: var(--bg);
+        color: var(--muted);
+        border: 2px solid var(--border);
+      }
+      .prog-label {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .prog-label.active {
+        color: var(--brand);
+      }
+      .prog-label.inactive {
+        color: var(--muted);
+      }
+      .prog-line {
+        flex: 1;
+        height: 2px;
+        background: var(--border);
+        margin: 0 8px;
+      }
+      .prog-line.done {
+        background: var(--green);
+      }
+
+      /* ── MAIN CONTENT ── */
+      main {
+        flex: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px 60px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 32px;
+        align-items: start;
+      }
+
+      /* ── LEFT SIDE ── */
+      .page-title {
+        font-size: 26px;
+        font-weight: 900;
+        margin-bottom: 6px;
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 28px;
+      }
+
+      /* Cuisine quick select */
+      .quick-label {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--text-2);
+        margin-bottom: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .cuisine-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 32px;
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-2);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .chip:hover,
+      .chip.active {
+        background: var(--brand-lt);
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+      .chip-emoji {
+        font-size: 16px;
+      }
+
+      /* Form card */
+      .form-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .form-card-header {
+        background: linear-gradient(135deg, var(--brand), #ff7c35);
+        padding: 22px 28px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .form-card-header i {
+        font-size: 22px;
+        color: white;
+      }
+      .form-card-header h2 {
+        font-size: 18px;
+        font-weight: 800;
+        color: white;
+      }
+      .form-card-header p {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+      .form-card-body {
+        padding: 28px;
+      }
+
+      .field-group {
+        margin-bottom: 22px;
+      }
+      .field-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--text-2);
+        margin-bottom: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .field-label i {
+        color: var(--brand);
+        font-size: 12px;
+      }
+
+      .input-wrap {
+        position: relative;
+      }
+      .input-wrap .icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .input-wrap input,
+      .input-wrap select {
+        width: 100%;
+        padding: 13px 14px 13px 44px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-family: "Nunito", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        background: var(--bg);
+        outline: none;
+        transition: all 0.2s;
+        appearance: none;
+      }
+      .input-wrap input:focus,
+      .input-wrap select:focus {
+        border-color: var(--brand);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(252, 92, 4, 0.1);
+      }
+      .input-wrap input::placeholder {
+        color: #bbb;
+        font-weight: 500;
+      }
+
+      /* Budget range pills */
+      .budget-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .budget-pill {
+        padding: 8px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-2);
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--bg);
+      }
+      .budget-pill:hover {
+        border-color: var(--brand);
+        color: var(--brand);
+        background: var(--brand-lt);
+      }
+      .budget-pill.selected {
+        border-color: var(--brand);
+        color: var(--brand);
+        background: var(--brand-lt);
+      }
+
+      /* hidden input for budget */
+      #budgetInput {
+        display: none;
+      }
+
+      /* Rating stars */
+      .rating-options {
+        display: flex;
+        gap: 8px;
+      }
+      .rating-opt {
+        flex: 1;
+        padding: 10px 8px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--bg);
+      }
+      .rating-opt:hover {
+        border-color: var(--brand);
+        background: var(--brand-lt);
+      }
+      .rating-opt.selected {
+        border-color: var(--brand);
+        background: var(--brand-lt);
+      }
+      .rating-opt .star-row {
+        font-size: 13px;
+        color: #f5a623;
+        margin-bottom: 2px;
+      }
+      .rating-opt .r-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-2);
+      }
+      .rating-opt.selected .r-label {
+        color: var(--brand);
+      }
+      #ratingInput {
+        display: none;
+      }
+
+      .form-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 16px;
+        background: var(--brand);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-family: "Nunito", sans-serif;
+        font-size: 16px;
+        font-weight: 900;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 4px 16px rgba(252, 92, 4, 0.3);
+      }
+      .submit-btn:hover {
+        background: var(--brand-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(252, 92, 4, 0.35);
+      }
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      /* ── RIGHT INFO PANEL ── */
+      .info-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .tip-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+      .tip-card-title {
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tip-card-title i {
+        color: var(--brand);
+      }
+      .tip-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-2);
+        line-height: 1.5;
+        align-items: flex-start;
+      }
+      .tip-item:last-child {
+        margin-bottom: 0;
+      }
+      .tip-item i {
+        color: var(--green);
+        margin-top: 2px;
+        flex-shrink: 0;
+        font-size: 12px;
+      }
+
+      .sample-card {
+        background: linear-gradient(135deg, var(--brand-lt), #fff8f5);
+        border: 1.5px solid rgba(252, 92, 4, 0.15);
+        border-radius: var(--radius);
+        padding: 20px;
+      }
+      .sample-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--brand);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .sample-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .sample-item {
+        background: white;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-2);
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sample-item:hover {
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+      .sample-item i {
+        color: var(--brand);
+        font-size: 11px;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: white;
+        border-top: 1px solid var(--border);
+        padding: 24px;
+      }
+      .footer-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-logo {
+        font-size: 18px;
+        font-weight: 900;
+        color: var(--text);
+      }
+      .footer-logo span {
+        color: var(--brand);
+      }
+      .footer-copy {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      @media (max-width: 860px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+        .info-panel {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="logo" href="/">
+          <div class="logo-icon"><i class="fa-solid fa-utensils"></i></div>
+          <span class="logo-text">Food<span>Lane</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/recommend" class="nav-active">Find Restaurants</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-wrap">
+      <div class="progress-inner">
+        <div class="prog-step">
+          <div class="prog-circle active">1</div>
+          <span class="prog-label active">Set Preferences</span>
+        </div>
+        <div class="prog-line"></div>
+        <div class="prog-step">
+          <div class="prog-circle inactive">2</div>
+          <span class="prog-label inactive">View Results</span>
+        </div>
+        <div class="prog-line"></div>
+        <div class="prog-step">
+          <div class="prog-circle inactive">3</div>
+          <span class="prog-label inactive">Find Your Table</span>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- LEFT: FORM -->
+      <div>
+        <h1 class="page-title">🔍 Find Similar Restaurants</h1>
+        <p class="page-subtitle">
+          Enter a restaurant you love and we'll find the best similar options
+        </p>
+
+        <!-- Cuisine Quick Select -->
+        <div class="quick-label">Popular Cuisines</div>
+        <div class="cuisine-chips" id="cuisineChips">
+          <div class="chip active" data-val="" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍽️</span> All
+          </div>
+          <div
+            class="chip"
+            data-val="north indian"
+            onclick="selectCuisine(this)"
+          >
+            <span class="chip-emoji">🍛</span> North Indian
+          </div>
+          <div
+            class="chip"
+            data-val="south indian"
+            onclick="selectCuisine(this)"
+          >
+            <span class="chip-emoji">🥘</span> South Indian
+          </div>
+          <div class="chip" data-val="chinese" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍜</span> Chinese
+          </div>
+          <div class="chip" data-val="mughlai" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍖</span> Mughlai
+          </div>
+          <div class="chip" data-val="italian" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍕</span> Italian
+          </div>
+          <div class="chip" data-val="biryani" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍱</span> Biryani
+          </div>
+          <div class="chip" data-val="fast food" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍔</span> Fast Food
+          </div>
+          <div class="chip" data-val="seafood" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🐟</span> Seafood
+          </div>
+          <div class="chip" data-val="thai" onclick="selectCuisine(this)">
+            <span class="chip-emoji">🍣</span> Thai
+          </div>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <div>
+              <h2>Restaurant Finder</h2>
+              <p>Powered by AI similarity matching</p>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <form action="/result" method="post" id="mainForm">
+              <!-- Hidden fields for interactive selectors -->
+              <input type="hidden" name="cuisine" id="cuisineInput" value="" />
+              <input
+                type="hidden"
+                name="budget"
+                id="budgetInput"
+                value="9999999"
+              />
+              <input type="hidden" name="rating" id="ratingInput" value="0" />
+
+              <div class="field-group">
+                <div class="field-label">
+                  <i class="fa-solid fa-store"></i> Restaurant Name
+                </div>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-search icon"></i>
+                  <input
+                    type="text"
+                    name="restaurant_name"
+                    id="restaurantName"
+                    placeholder="e.g. Jalsa, Spice Elephant, Barbeque Nation..."
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">
+                  <i class="fa-solid fa-indian-rupee-sign"></i> Max Budget Per
+                  Person
+                </div>
+                <div class="budget-pills" id="budgetPills">
+                  <div
+                    class="budget-pill selected"
+                    data-val="9999999"
+                    onclick="selectBudget(this)"
+                  >
+                    Any Budget
+                  </div>
+                  <div
+                    class="budget-pill"
+                    data-val="300"
+                    onclick="selectBudget(this)"
+                  >
+                    Under ₹300
+                  </div>
+                  <div
+                    class="budget-pill"
+                    data-val="500"
+                    onclick="selectBudget(this)"
+                  >
+                    Under ₹500
+                  </div>
+                  <div
+                    class="budget-pill"
+                    data-val="800"
+                    onclick="selectBudget(this)"
+                  >
+                    Under ₹800
+                  </div>
+                  <div
+                    class="budget-pill"
+                    data-val="1000"
+                    onclick="selectBudget(this)"
+                  >
+                    Under ₹1000
+                  </div>
+                  <div
+                    class="budget-pill"
+                    data-val="1500"
+                    onclick="selectBudget(this)"
+                  >
+                    Under ₹1500
+                  </div>
+                  <div
+                    class="budget-pill"
+                    data-val="2000"
+                    onclick="selectBudget(this)"
+                  >
+                    Under ₹2000
+                  </div>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">
+                  <i class="fa-solid fa-star"></i> Minimum Rating
+                </div>
+                <div class="rating-options" id="ratingOpts">
+                  <div
+                    class="rating-opt selected"
+                    data-val="0"
+                    onclick="selectRating(this)"
+                  >
+                    <div class="star-row">⭐⭐⭐⭐⭐</div>
+                    <div class="r-label">Any</div>
+                  </div>
+                  <div
+                    class="rating-opt"
+                    data-val="3"
+                    onclick="selectRating(this)"
+                  >
+                    <div class="star-row">⭐⭐⭐</div>
+                    <div class="r-label">3.0+</div>
+                  </div>
+                  <div
+                    class="rating-opt"
+                    data-val="3.5"
+                    onclick="selectRating(this)"
+                  >
+                    <div class="star-row">⭐⭐⭐✨</div>
+                    <div class="r-label">3.5+</div>
+                  </div>
+                  <div
+                    class="rating-opt"
+                    data-val="4"
+                    onclick="selectRating(this)"
+                  >
+                    <div class="star-row">⭐⭐⭐⭐</div>
+                    <div class="r-label">4.0+</div>
+                  </div>
+                  <div
+                    class="rating-opt"
+                    data-val="4.5"
+                    onclick="selectRating(this)"
+                  >
+                    <div class="star-row">⭐⭐⭐⭐✨</div>
+                    <div class="r-label">4.5+</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-divider"></div>
+
+              <button type="submit" class="submit-btn">
+                <i class="fa-solid fa-magnifying-glass"></i> Find Restaurants
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: INFO PANEL -->
+      <div class="info-panel">
+        <div class="tip-card">
+          <div class="tip-card-title">
+            <i class="fa-solid fa-lightbulb"></i> Pro Tips
+          </div>
+          <div class="tip-item">
+            <i class="fa-solid fa-circle-check"></i> Use the exact restaurant
+            name as listed in our database
+          </div>
+          <div class="tip-item">
+            <i class="fa-solid fa-circle-check"></i> Select "Any Budget" for
+            more results, then narrow down
+          </div>
+          <div class="tip-item">
+            <i class="fa-solid fa-circle-check"></i> Results are always sorted
+            by rating — highest first
+          </div>
+          <div class="tip-item">
+            <i class="fa-solid fa-circle-check"></i> Try "Any Cuisine" to see
+            all similar restaurants
+          </div>
+        </div>
+
+        <div class="sample-card">
+          <div class="sample-title">✨ Try these restaurants</div>
+          <div class="sample-list">
+            <div class="sample-item" onclick="fillSample('Jalsa')">
+              <i class="fa-solid fa-arrow-right"></i> Jalsa
+            </div>
+            <div class="sample-item" onclick="fillSample('Spice Elephant')">
+              <i class="fa-solid fa-arrow-right"></i> Spice Elephant
+            </div>
+            <div class="sample-item" onclick="fillSample('Barbeque Nation')">
+              <i class="fa-solid fa-arrow-right"></i> Barbeque Nation
+            </div>
+            <div class="sample-item" onclick="fillSample('Paradise')">
+              <i class="fa-solid fa-arrow-right"></i> Paradise
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-logo">Food<span>Lane</span></div>
+        <div class="footer-copy">
+          © 2026 FoodLane · Developed by Bilal Mirje.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function selectCuisine(el) {
+        document
+          .querySelectorAll("#cuisineChips .chip")
+          .forEach((c) => c.classList.remove("active"));
+        el.classList.add("active");
+        document.getElementById("cuisineInput").value = el.dataset.val;
+      }
+      function selectBudget(el) {
+        document
+          .querySelectorAll("#budgetPills .budget-pill")
+          .forEach((b) => b.classList.remove("selected"));
+        el.classList.add("selected");
+        document.getElementById("budgetInput").value = el.dataset.val;
+      }
+      function selectRating(el) {
+        document
+          .querySelectorAll("#ratingOpts .rating-opt")
+          .forEach((r) => r.classList.remove("selected"));
+        el.classList.add("selected");
+        document.getElementById("ratingInput").value = el.dataset.val;
+      }
+      function fillSample(name) {
+        document.getElementById("restaurantName").value = name;
+        document.getElementById("restaurantName").focus();
+      }
+    </script>
+  </body>
+</html>
